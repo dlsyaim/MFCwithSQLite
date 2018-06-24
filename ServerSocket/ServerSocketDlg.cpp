@@ -67,7 +67,7 @@ CServerSocketDlg::CServerSocketDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CServerSocketDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CServerSocketDlg)
-	m_strPort = _T("2000");
+	m_strPort = _T("8081");
 	m_nSockType = SOCK_TCP;	// default TCP
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
@@ -210,7 +210,7 @@ BOOL CServerSocketDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 	
 	// TODO: Add extra initialization here
-	m_ctlPortInc.SetRange32( 2000, 4500);
+	m_ctlPortInc.SetRange32( 2000, 14500);
 	GetDlgItem(IDC_BTN_SEND)->EnableWindow( FALSE );
 	GetDlgItem(IDC_BTN_STOP)->EnableWindow( FALSE );
 

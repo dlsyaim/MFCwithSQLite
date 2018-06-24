@@ -77,6 +77,20 @@ static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
 void CSocketManager::AppendMessage(LPCTSTR strText )
 {
 	//AfxMessageBox(strText);
+	CString szTime;
+	CTime time;
+
+	time = CTime::GetCurrentTime();
+	szTime = time.Format("%Y/%m/%d-%H:%M:%S");
+
+	CString str = CString(strText);
+
+	str = szTime + ":" + str + "\n";
+
+	//LPCTSTR lpctszStr = szTime;
+
+
+
 
 	sqlite3 *db;
 	char *zErrMsg = 0;
@@ -127,7 +141,8 @@ void CSocketManager::AppendMessage(LPCTSTR strText )
 		int nLen = (int) dwResult;
 		if (SendMessageTimeout(hWnd, EM_SETSEL, nLen, nLen, SMTO_NORMAL, 1000L, &dwResult) != 0)
 		{
-			if (SendMessageTimeout(hWnd, EM_REPLACESEL, FALSE, (LPARAM)strText, SMTO_NORMAL, 1000L, &dwResult) != 0)
+			if (SendMessageTimeout(hWnd, EM_REPLACESEL, FALSE, (LPARAM)(LPCTSTR)str, SMTO_NORMAL, 1000L, &dwResult) != 0)
+			//if (SendMessageTimeout(hWnd, EM_REPLACESEL, FALSE, (LPARAM)strText, SMTO_NORMAL, 1000L, &dwResult) != 0)
 			{
 			}
 		}
