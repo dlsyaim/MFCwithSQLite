@@ -8,6 +8,7 @@
 #include "SocketManager.h"
 #include "sqlite3.h"
 
+
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
@@ -84,44 +85,69 @@ void CSocketManager::AppendMessage(LPCTSTR strText )
 	szTime = time.Format("%Y/%m/%d-%H:%M:%S");
 
 	CString str = CString(strText);
+	CString str1 = CString(strText);
+	//str1 = "←◆*MG201868500023678352,AB&A1516413107415412135612660031250618&X460,0,6319,31435,66;6281,49345,67;6319,31484,70;6319,31477,71;6281,49347,75;6319,31574,75;6319,31573,76&B0100000000&W0000&N23&Z14&Y14361&T0847#";
 
 	str = szTime + ":" + str + "\n";
 
 	//LPCTSTR lpctszStr = szTime;
 
+	CString field;
 
+	CArray<CString, CString> v;
 
-
-	sqlite3 *db;
-	char *zErrMsg = 0;
-	int rc;
-	char *sql;
-
-	rc = sqlite3_open("db.db", &db);
-
-	if (rc) {
-		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-		exit(0);
-	}
-	else {
-		fprintf(stderr, "Opened database successfully\n");
-		
+	int index = 0;
+	// last argument is the delimitter
+	while (AfxExtractSubString(field, str1, index, _T(',')))
+	{
+		v.Add(field);
+		++index;
 	}
 
-	sql = "INSERT INTO test(tktype, tableid, createdate)\
-		VALUES('1', 'Norway', '2018-06-23');";
 
-	/* Execute SQL statement */
-	rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
-	if (rc != SQLITE_OK) {
-		fprintf(stderr, "SQL error: %s\n", zErrMsg);
-		sqlite3_free(zErrMsg);
-	}
-	else {
-		fprintf(stdout, "Table created successfully\n");
-	}
-	sqlite3_close(db);
+	if (v[0].Find("MG20") != NULL) {
+		int index = v[0].Find("MG20");
+		CString ID = v[0].Mid(index+5,16); //获取设备编号
 
+		if (ID.GetLength() > 10) {	//防止为“”
+
+			index = str1.Find("&B0");
+			CString Status = str1.Mid(index + 3, 1);
+
+			sqlite3 *db;
+			char *zErrMsg = 0;
+			int rc;
+			char *sql;
+
+			rc = sqlite3_open("db.db", &db);
+
+			if (rc) {
+				fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+				exit(0);
+			}
+			else {
+				fprintf(stderr, "Opened database successfully\n");
+
+			}
+
+			CString sqlStr = "INSERT INTO rec(name, status) VALUES('" + ID + "'," + Status + ");";
+
+			/* Execute SQL statement */
+			rc = sqlite3_exec(db, (char *)(LPCTSTR)(sqlStr), callback, 0, &zErrMsg);
+			if (rc != SQLITE_OK) {
+				fprintf(stderr, "SQL error: %s\n", zErrMsg);
+				sqlite3_free(zErrMsg);
+			}
+			else {
+				fprintf(stdout, "Table created successfully\n");
+			}
+			sqlite3_close(db);
+		}
+
+
+	}
+
+	
 
 
 	if (NULL == m_pMsgCtrl)
