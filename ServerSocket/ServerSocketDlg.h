@@ -8,7 +8,9 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "stdafx.h"
 #include "SocketManager.h"
+#include <afxdao.h>
 
 #define MAX_CONNECTION		10
 
@@ -47,6 +49,12 @@ protected:
 
 	void PickNextAvailable();
 	bool StartServer();
+	BOOL Open_MyDatabase(CString connstr);
+	_ConnectionPtr m_pConnection; // Êý¾Ý¿â
+	_RecordsetPtr m_pRecordset; // ÃüÁî
+	_CommandPtr m_pCommand; // ¼ÇÂ¼
+	void OnInitADOConn();
+	void ExitConnect();
 
 	// Generated message map functions
 	//{{AFX_MSG(CServerSocketDlg)
@@ -60,6 +68,7 @@ protected:
 	afx_msg void OnBtnSend();
 	//}}AFX_MSG
 	afx_msg LRESULT OnUpdateConnection(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnGetData(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 };
 

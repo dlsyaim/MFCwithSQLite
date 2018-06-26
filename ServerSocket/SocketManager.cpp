@@ -109,39 +109,51 @@ void CSocketManager::AppendMessage(LPCTSTR strText )
 		int index = v[0].Find("MG20");
 		CString ID = v[0].Mid(index+5,16); //获取设备编号
 
-		if (ID.GetLength() > 10) {	//防止为“”
+		if (ID.GetLength() > 10) 
+		{	//防止为“”
+
+			CWnd* pParent = m_pMsgCtrl->GetParent();
+			if (!::IsWindow(pParent->GetSafeHwnd()))
+				return;
+
+			
 
 			index = str1.Find("&B0");
 			CString Status = str1.Mid(index + 3, 1);
 
-			sqlite3 *db;
-			char *zErrMsg = 0;
-			int rc;
-			char *sql;
+			//sqlite3 *db;
+			//char *zErrMsg = 0;
+			//int rc;
+			//char *sql;
 
-			rc = sqlite3_open("db.db", &db);
+			//rc = sqlite3_open("db.db", &db);
 
-			if (rc) {
-				fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-				exit(0);
-			}
-			else {
-				fprintf(stderr, "Opened database successfully\n");
+			//if (rc) {
+			//	fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+			//	exit(0);
+			//}
+			//else {
+			//	fprintf(stderr, "Opened database successfully\n");
 
-			}
+			//}
 
 			CString sqlStr = "INSERT INTO rec(name, status) VALUES('" + ID + "'," + Status + ");";
 
-			/* Execute SQL statement */
-			rc = sqlite3_exec(db, (char *)(LPCTSTR)(sqlStr), callback, 0, &zErrMsg);
-			if (rc != SQLITE_OK) {
-				fprintf(stderr, "SQL error: %s\n", zErrMsg);
-				sqlite3_free(zErrMsg);
-			}
-			else {
-				fprintf(stdout, "Table created successfully\n");
-			}
-			sqlite3_close(db);
+			CString* msg = new CString(sqlStr);
+			//pParent->PostMessage(WM_GET_DATA, 0, (LPARAM)(LPCTSTR)sqlStr);
+			pParent->PostMessage(WM_GET_DATA, WPARAM(TRUE), (LPARAM)msg);
+			//sqlStr.ReleaseBuffer();
+
+			///* Execute SQL statement */
+			//rc = sqlite3_exec(db, (char *)(LPCTSTR)(sqlStr), callback, 0, &zErrMsg);
+			//if (rc != SQLITE_OK) {
+			//	fprintf(stderr, "SQL error: %s\n", zErrMsg);
+			//	sqlite3_free(zErrMsg);
+			//}
+			//else {
+			//	fprintf(stdout, "Table created successfully\n");
+			//}
+			//sqlite3_close(db);
 		}
 
 

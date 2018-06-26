@@ -12,6 +12,7 @@
 #include "SocketComm.h"
 
 #define WM_UPDATE_CONNECTION	WM_APP+0x1234
+#define WM_GET_DATA	WM_APP+0x1235
 
 class CSocketManager : public CSocketComm  
 {

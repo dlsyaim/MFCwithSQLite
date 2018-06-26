@@ -104,7 +104,10 @@ BOOL CServerSocketApp::InitInstance()
 
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
+
+	AfxOleInit(); //COM¿âµÄ³õÊ¼»¯
 	return FALSE;
+
 }
 
 int CServerSocketApp::ExitInstance() 

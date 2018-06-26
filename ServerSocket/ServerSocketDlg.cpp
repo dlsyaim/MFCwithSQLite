@@ -97,6 +97,7 @@ BEGIN_MESSAGE_MAP(CServerSocketDlg, CDialog)
 	ON_BN_CLICKED(IDC_BTN_SEND, OnBtnSend)
 	//}}AFX_MSG_MAP
 	ON_MESSAGE(WM_UPDATE_CONNECTION, OnUpdateConnection)
+	ON_MESSAGE(WM_GET_DATA, OnGetData)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -174,7 +175,6 @@ bool CServerSocketDlg::StartServer()
 			m_pCurServer->AppendMessage( strMsg );
 		}
 	}
-
 	return bSuccess;
 }
 
@@ -185,7 +185,8 @@ BOOL CServerSocketDlg::OnInitDialog()
 	ASSERT( GetDlgItem(IDC_BTN_STOP) != NULL );
 
 	CDialog::OnInitDialog();
-
+	//数据库连接
+	OnInitADOConn();
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -301,6 +302,21 @@ LRESULT CServerSocketDlg::OnUpdateConnection(WPARAM wParam, LPARAM lParam)
 	return 1L;
 }
 
+LRESULT CServerSocketDlg::OnGetData(WPARAM wParam, LPARAM lParam)
+{
+
+
+	CString* rmsg = (CString*)lParam;
+	try {
+		m_pConnection->Execute((LPCTSTR)(*rmsg), NULL, NULL);
+	}
+	catch(_com_error e){
+		
+	}
+
+	return 1L;
+}
+
 // The system calls this to obtain the cursor to display while the user drags
 //  the minimized window.
 HCURSOR CServerSocketDlg::OnQueryDragIcon()
@@ -329,6 +345,9 @@ void CServerSocketDlg::OnBtnStop()
 		GetDlgItem(IDC_TCP)->EnableWindow( TRUE );
 		GetDlgItem(IDC_UDP)->EnableWindow( TRUE );
 	}
+
+	//数据库断开连接
+	//ExitConnect();
 }
 
 
@@ -379,4 +398,35 @@ void CServerSocketDlg::OnDestroy()
 
 	CDialog::OnDestroy();
 }
+void CServerSocketDlg::OnInitADOConn()
+{
+	::CoInitialize(NULL);
+	try
+	{
+		m_pConnection.CreateInstance("ADODB.Connection");
+		//_bstr_t strConnect = "Provider=SQLOLEDB.1;Persist Security Info=False;User ID=sa; password =sa123; Initial Catalog=db;Data Source=127.0.0.1";
+		_bstr_t strConnect = "Provider=SQLOLEDB.1;Persist Security Info=False;User ID=sa; password =zw@18721841411; Initial Catalog=db;Data Source=127.0.0.1";
+		m_pConnection->Open(strConnect, "", "", adModeUnknown);
+	}
+	catch (_com_error e)
+	{
+		AfxMessageBox("连接失败");
+	}
+}
+//这里是连接master数据库，无密码。
+void CServerSocketDlg::ExitConnect()
+{
+	if (m_pRecordset != NULL)
+		m_pRecordset->Close();
+	m_pConnection->Close();
+	::CoUninitialize();
+}
+//4.ok，我们可以开始用了：
+//首先，把我们类的头文件包含在主程序#include "Adosql.h"
+//申明一个全局变量：Adosql mysql;//对象声明
+//连接的代码可以做一个按钮eg：void CSqlDlg::OnButton4()
+//{
+//	// TODO: Add your control notification handler code here
+//	mysql.OnInitADOConn();//连接到数据库
+//}
 

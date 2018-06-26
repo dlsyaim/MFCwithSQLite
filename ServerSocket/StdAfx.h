@@ -20,7 +20,28 @@
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 //#include <afxsock.h>		// MFC socket extensions
+//#import "c:\program files\common files\system\ado\msado15.dll" no_namespace rename("EOF","adoEOF")
+//
+//#pragma warning(disable:4146)
+//#import "C:/Program Files/Common Files/System/ADO/msado15.dll" named_guids rename("EOF","adoEOF"), rename("BOF","adoBOF")
+//#pragma warning(default:4146)
 
+//#if !defined(__AFXADO_H)
+#pragma warning (disable : 4146)
+#import "c:\Program Files\Common Files\SYSTEM\ADO\msado15.dll" \
+        no_namespace \
+        rename ("EOF", "adoEOF") \
+        rename ("LockTypeEnum", "adoLockTypeEnum") \
+        rename ("DataTypeEnum", "adoDataTypeEnum") \
+        rename ("FieldAttributeEnum", "adoFieldAttributeEnum") \
+        rename ("EditModeEnum", "adoEditModeEnum") \
+        rename ("RecordStatusEnum", "adoRecordStatusEnum") \
+        rename ("ParameterDirectionEnum", "adoParameterDirectionEnum")
+#include <afxhtml.h>
+#include <afx.h>
+#pragma warning (default : 4146)
+
+//#endif
 //#include <winsock2.h>
 //#include <mswsock.h>
 #pragma comment(lib, "ws2_32")
